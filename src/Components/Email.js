@@ -4,14 +4,17 @@ import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import { selectOpen, setClose } from "../fetures/emailSlice";
 import axios from "../axios";
+import { setMsgClose, setMsgOpen } from "../fetures/messageSlice";
 
 function Email({ id }) {
   const dispatch = useDispatch();
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
   const open = useSelector(selectOpen);
+  const [sending, setSending] = useState(false);
 
   const sendMail = (e) => {
+    setSending(true);
     e.preventDefault();
     const data = {
       from: from,
@@ -20,8 +23,42 @@ function Email({ id }) {
     };
     axios
       .post("/send/mail", data)
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
+      .then((res) => {
+        dispatch(
+          setMsgOpen({
+            msg: "Email sent !",
+            bgColor: "green",
+            error: false,
+          })
+        );
+
+        setFrom("");
+        setTo("");
+
+        setTimeout(() => {
+          dispatch(setMsgClose());
+        }, 2000);
+
+        setTimeout(() => {
+          dispatch(setClose());
+        }, 2000);
+        setSending(false);
+      })
+      .catch((err) => {
+        dispatch(
+          setMsgOpen({
+            msg: "Some error occured !",
+            bgColor: "red",
+            error: true,
+          })
+        );
+
+        setTimeout(() => {
+          dispatch(setMsgClose());
+        }, 2000);
+
+        setSending(false);
+      });
   };
 
   return (
@@ -53,9 +90,9 @@ function Email({ id }) {
           <button
             type="submit"
             onClick={(e) => sendMail(e)}
-            disabled={!from || !to ? true : false}
+            disabled={!from || !to || sending ? true : false}
           >
-            Send Mail
+            {sending ? "Sending Mail..." : "Send Mail"}
           </button>
         </Info>
       </Main>
@@ -92,10 +129,16 @@ const Info = styled.form`
 
   input {
     margin-bottom: 10px;
-    padding: 10px;
+    padding: 20px;
     outline: none;
+    background-color: rgba(255, 219, 168, 0.2);
     border: none;
-    border-bottom: 2px solid orange;
+    border-bottom: 3px solid transparent;
+    position: relative;
+    font-size: 1rem;
+    border-radius: 2px;
+    color: #000;
+    transition: all 250ms ease-in;
   }
 
   button {

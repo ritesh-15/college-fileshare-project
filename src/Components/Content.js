@@ -6,6 +6,8 @@ import { selectOpen, setOpen } from "../fetures/emailSlice";
 import Email from "./Email";
 import axios from "../axios";
 import FormData from "form-data";
+import { setMsgClose, setMsgOpen } from "../fetures/messageSlice";
+import { CheckCircle } from "@material-ui/icons";
 
 function Content() {
   const [link, setLink] = useState("");
@@ -14,9 +16,29 @@ function Content() {
   const [file, setFile] = useState("");
   const [over, setOver] = useState(false);
   const [loading, setLoading] = useState(0);
+  const [copy, setCopy] = useState(false);
 
   const copyText = () => {
+    let timer;
     navigator.clipboard.writeText(link);
+    setCopy(true);
+
+    setTimeout(() => {
+      setCopy(false);
+    }, 2000);
+
+    dispatch(
+      setMsgOpen({
+        msg: "Copied to clipboard !",
+        bgColor: "orange",
+        error: false,
+      }),
+      clearTimeout(timer)
+    );
+
+    timer = setTimeout(() => {
+      dispatch(setMsgClose());
+    }, 2000);
   };
 
   const handleChange = (e) => {
@@ -67,7 +89,18 @@ function Content() {
           setLink(res.data.file);
           setFile("");
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          dispatch(
+            setMsgOpen({
+              msg: "Something went wrong !",
+              bgColor: "red",
+              error: true,
+            })
+          );
+          setTimeout(() => {
+            dispatch(setMsgClose());
+          }, 2000);
+        });
     }
   };
 
@@ -79,7 +112,14 @@ function Content() {
       </Info>
 
       <Main>
-        <Email id={link && link} />
+        <Email
+          id={link && link}
+          style={
+            open
+              ? { transform: "scale(0)", zIndex: "-1" }
+              : { transform: "scale(1)", zIndex: "10" }
+          }
+        />
         <Center
           style={
             open
@@ -127,7 +167,7 @@ function Content() {
                 <p>Link will be expire in 24 hours</p>
                 <CopyLink>
                   <input type="text" value={link} readOnly />
-                  <Copy onClick={copyText} />
+                  {copy ? <Check /> : <Copy onClick={copyText} />}
                 </CopyLink>
               </Link>
               <Or>Or</Or>
@@ -333,4 +373,10 @@ const Or = styled.p`
   text-align: center;
   color: grey;
   text-transform: lowercase;
+`;
+
+const Check = styled(CheckCircle)`
+  margin-left: 10px;
+  color: green;
+  cursor: pointer;
 `;
