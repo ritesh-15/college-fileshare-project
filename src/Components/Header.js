@@ -1,15 +1,17 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Close, Menu } from "@material-ui/icons";
+import Footer from "./Footer";
 
 function Header() {
   const [open, setOpen] = useState(false);
+  const history = useHistory();
   return (
     <Container>
       <Left>
         {/* <img src="https://cdn.iconscout.com/icon/free/png-512/my-files-1-461722.png" /> */}
-        <h4>fileShare</h4>
+        <h4 onClick={(e) => history.push("/")}>fileShare</h4>
       </Left>
       <Right>
         <Link to="/" style={{ textDecoration: "none" }}>
@@ -30,15 +32,34 @@ function Header() {
           <Cross onClick={(e) => setOpen(false)} />
         </TopMobileNav>
         <NavContent>
-          <Link to="/" style={{ textDecoration: "none" }}>
+          <Link
+            onClick={(e) => {
+              history.push("/");
+              setOpen(false);
+            }}
+            style={{ textDecoration: "none" }}
+          >
             Home
           </Link>
-          <Link to="/use" style={{ textDecoration: "none" }}>
+          <Link
+            onClick={(e) => {
+              history.push("/use");
+              setOpen(false);
+            }}
+            style={{ textDecoration: "none" }}
+          >
             How to use
           </Link>
-          <Link to="/contact" style={{ textDecoration: "none" }}>
+          <Link
+            onClick={(e) => {
+              history.push("/contact");
+              setOpen(false);
+            }}
+            style={{ textDecoration: "none" }}
+          >
             Contact Us
           </Link>
+          <p>&copy; All rights reserved</p>
         </NavContent>
       </MobileNav>
     </Container>
@@ -171,6 +192,13 @@ const NavContent = styled.div`
       }
     }
   }
+
+  p {
+    padding: 20px;
+    font-size: 0.8rem;
+    height: 100%;
+    margin-top: auto;
+  }
 `;
 
 const Cross = styled(Close)`
@@ -178,6 +206,7 @@ const Cross = styled(Close)`
   margin-left: auto;
   position: absolute;
   right: 0;
+  color: grey !important;
 `;
 
 const TopMobileNav = styled.div`

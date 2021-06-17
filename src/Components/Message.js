@@ -8,8 +8,8 @@ function Message({ message, bgColor, error, hide }) {
     <Container
       style={
         hide
-          ? { transform: "translateY(300%)" }
-          : { transform: "translateY(0%)" }
+          ? { transform: "translateY(-100%)" }
+          : { transform: "translateY(2%)" }
       }
     >
       {error ? <ErrorIcon /> : <Check />}
@@ -34,7 +34,8 @@ const Container = styled.div`
   font-weight: 600;
   transition: all 250ms ease-in;
   position: fixed;
-  left: 50%;
+  left: 40%;
+  top: 0;
 
   p {
     margin-left: 10px;

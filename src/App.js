@@ -7,6 +7,7 @@ import { selectMsg } from "./fetures/messageSlice";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Use from "./Components/Use";
 import Contact from "./Components/Contact";
+import Footer from "./Components/Footer";
 
 function App() {
   const message = useSelector(selectMsg);
@@ -18,14 +19,17 @@ function App() {
           <Route path="/use">
             <Header />
             <Use />
+            <Footer />
           </Route>
           <Route path="/contact">
             <Header />
             <Contact />
+            <Footer />
           </Route>
           <Route path="/">
             <Header />
             <Content />
+            <Footer />
           </Route>
         </Switch>
       </Router>

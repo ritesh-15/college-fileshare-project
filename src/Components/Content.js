@@ -24,6 +24,14 @@ function Content() {
     navigator.clipboard.writeText(link);
     setCopy(true);
 
+    dispatch(
+      setMsgOpen({
+        msg: "Copied to clipboard !",
+        bgColor: "orange",
+        error: false,
+      })
+    );
+
     setTimeout(() => {
       setCopy(false);
     }, 2000);

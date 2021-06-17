@@ -1,3 +1,4 @@
+import axios from "../axios";
 import React, { useState } from "react";
 import styled from "styled-components";
 
@@ -9,6 +10,34 @@ function Contact() {
 
   const handleChange = (e) => {
     setQuery(e.target.value);
+  };
+
+  const clear = () => {
+    setName("");
+    setEmail("");
+    setQuery("");
+    setMessage("");
+  };
+
+  const send = () => {
+    if (query != "default") {
+      const data = {
+        name: name,
+        email: email,
+        queryType: query,
+        message: message,
+        time: Date.now(),
+      };
+      axios
+        .post("/new/contact", data)
+        .then((res) => {
+          clear();
+          console.log(res.data);
+        })
+        .catch((err) => console.log(err));
+    } else {
+      alert("Please select complent type !");
+    }
   };
 
   return (
@@ -58,7 +87,12 @@ function Contact() {
               placeholder="Message"
             />
             <button
-              disabled={!name || !email || !message || !query ? true : false}
+              disabled={
+                !name || !email || !message || !query || query == "default"
+                  ? true
+                  : false
+              }
+              onClick={send}
             >
               Send
             </button>
@@ -166,6 +200,7 @@ const Info = styled.div`
     border: none;
     border-bottom: 1px solid black;
     font-size: 1rem;
+    color: grey;
     outline: none;
 
     option {
@@ -188,6 +223,7 @@ const Info = styled.div`
     font-size: 1rem;
     resize: none;
     border-radius: 6px;
+    color: grey;
   }
 
   button {
@@ -233,6 +269,8 @@ const FormDiv = styled.div`
     padding-top: 20px;
     outline: none;
     font-size: 1rem;
+    color: grey;
+    padding-bottom: 5px;
 
     &:focus + label span,
     &:valid + label span {
@@ -255,6 +293,7 @@ const FormDiv = styled.div`
     height: 100%;
     border-bottom: 1px solid black;
     width: 100%;
+    color: grey;
 
     &::after {
       content: "";
