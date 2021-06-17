@@ -6,7 +6,7 @@ import { selectOpen, setClose } from "../fetures/emailSlice";
 import axios from "../axios";
 import { setMsgClose, setMsgOpen } from "../fetures/messageSlice";
 
-function Email({ id }) {
+function Email({ id, clear }) {
   const dispatch = useDispatch();
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -34,6 +34,8 @@ function Email({ id }) {
 
         setFrom("");
         setTo("");
+
+        clear();
 
         setTimeout(() => {
           dispatch(setMsgClose());
@@ -75,18 +77,34 @@ function Email({ id }) {
           <CloseIcon onClick={(e) => dispatch(setClose())} />
         </Top>
         <Info onSubmit={(e) => sendMail(e)}>
-          <input
-            type="email"
-            value={from}
-            onChange={(e) => setFrom(e.target.value)}
-            placeholder="From"
-          />
-          <input
-            type="email"
-            value={to}
-            onChange={(e) => setTo(e.target.value)}
-            placeholder="To"
-          />
+          <FormDiv>
+            <input
+              value={from}
+              onChange={(e) => {
+                setFrom(e.target.value);
+              }}
+              id="from"
+              type="email"
+              autoComplete="off"
+              required
+            />
+            <label htmlFor="from">
+              <span>From</span>
+            </label>
+          </FormDiv>
+          <FormDiv>
+            <input
+              value={to}
+              onChange={(e) => setTo(e.target.value)}
+              id="to"
+              type="email"
+              autoComplete="off"
+              required
+            />
+            <label htmlFor="to">
+              <span>To</span>
+            </label>
+          </FormDiv>
           <button
             type="submit"
             onClick={(e) => sendMail(e)}
@@ -109,7 +127,7 @@ const Container = styled.div`
   margin-top: 40px;
   position: absolute;
   z-index: -1;
-  transition: all 0.35s ease-in;
+  transition: all 0.3s ease-in;
 `;
 
 const Main = styled.div`
@@ -127,20 +145,6 @@ const Info = styled.form`
   display: flex;
   flex-direction: column;
 
-  input {
-    margin-bottom: 10px;
-    padding: 20px;
-    outline: none;
-    background-color: rgba(255, 219, 168, 0.2);
-    border: none;
-    border-bottom: 3px solid transparent;
-    position: relative;
-    font-size: 1rem;
-    border-radius: 2px;
-    color: #000;
-    transition: all 250ms ease-in;
-  }
-
   button {
     padding: 8px 20px;
     margin-top: 10px;
@@ -156,8 +160,13 @@ const Info = styled.form`
     transition: all 250ms ease-in;
 
     &:disabled {
-      background-color: #ffb566;
+      opacity: 0.6;
       cursor: not-allowed;
+
+      &:hover {
+        background-color: orange;
+        color: #fff;
+      }
     }
 
     &:hover {
@@ -180,11 +189,68 @@ const Top = styled.div`
     margin-bottom: 20px;
     color: grey;
     margin: 0;
-    padding-left: 10px;
   }
 `;
 
 const CloseIcon = styled(Close)`
   color: grey;
   cursor: pointer !important;
+`;
+
+const FormDiv = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  margin: 20px 0;
+
+  input {
+    width: 100%;
+    height: 100%;
+    border: none;
+    padding-top: 20px;
+    outline: none;
+    font-size: 1rem;
+
+    &:focus + label span,
+    &:valid + label span {
+      transform: translateY(-150%);
+      font-size: 1rem;
+      color: orange;
+    }
+
+    &:focus + label::after,
+    &:valid + label::after {
+      transform: scaleX(1);
+    }
+  }
+
+  label {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    pointer-events: none;
+    height: 100%;
+    border-bottom: 1px solid black;
+    width: 100%;
+
+    &::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-bottom: 3px solid orange;
+      left: 0;
+      transform: scaleX(0);
+      transform-origin: center;
+      transition: all 0.5s ease;
+      bottom: -1px;
+    }
+
+    span {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      transition: all 0.3s ease;
+    }
+  }
 `;

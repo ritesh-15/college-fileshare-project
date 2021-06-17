@@ -6,7 +6,11 @@ import ErrorIcon from "@material-ui/icons/Error";
 function Message({ message, bgColor, error, hide }) {
   return (
     <Container
-      style={hide ? { transform: "scale(0)" } : { transform: "scale(1)" }}
+      style={
+        hide
+          ? { transform: "translateY(300%)" }
+          : { transform: "translateY(0%)" }
+      }
     >
       {error ? <ErrorIcon /> : <Check />}
       <p>{message}</p>
@@ -19,6 +23,7 @@ export default Message;
 const Container = styled.div`
   width: 100%;
   max-width: fit-content;
+  z-index: 100;
   margin-left: 20px;
   display: flex;
   align-items: center;
@@ -29,7 +34,7 @@ const Container = styled.div`
   font-weight: 600;
   transition: all 250ms ease-in;
   position: fixed;
-  left: 0;
+  left: 50%;
 
   p {
     margin-left: 10px;

@@ -8,6 +8,7 @@ import axios from "../axios";
 import FormData from "form-data";
 import { setMsgClose, setMsgOpen } from "../fetures/messageSlice";
 import { CheckCircle } from "@material-ui/icons";
+import { Alert } from "@material-ui/lab";
 
 function Content() {
   const [link, setLink] = useState("");
@@ -25,19 +26,6 @@ function Content() {
 
     setTimeout(() => {
       setCopy(false);
-    }, 2000);
-
-    dispatch(
-      setMsgOpen({
-        msg: "Copied to clipboard !",
-        bgColor: "orange",
-        error: false,
-      }),
-      clearTimeout(timer)
-    );
-
-    timer = setTimeout(() => {
-      dispatch(setMsgClose());
     }, 2000);
   };
 
@@ -87,6 +75,7 @@ function Content() {
         })
         .then((res) => {
           setLink(res.data.file);
+          setLoading(100);
           setFile("");
         })
         .catch((err) => {
@@ -104,11 +93,17 @@ function Content() {
     }
   };
 
+  const clearFilds = () => {
+    setFile("");
+    setLink("");
+    setLoading(0);
+  };
+
   return (
     <Container>
       <Info>
         <h1>Hey there ,</h1>
-        <p>Welcome to the fileshare </p>
+        <p>Welcome to the fileShare </p>
       </Info>
 
       <Main>
@@ -119,6 +114,7 @@ function Content() {
               ? { transform: "scale(0)", zIndex: "-1" }
               : { transform: "scale(1)", zIndex: "10" }
           }
+          clear={clearFilds}
         />
         <Center
           style={
@@ -152,6 +148,7 @@ function Content() {
               style={{ display: "none" }}
               type="file"
               id="file"
+              disabled={link ? true : false}
             />
           </Top>
           {file && (
@@ -183,6 +180,7 @@ function Content() {
             </>
           )}
         </Center>
+        <UploadImg src="images/upload.svg" />
       </Main>
     </Container>
   );
@@ -223,11 +221,20 @@ const Info = styled.div`
     font-size: 3rem;
     text-transform: capitalize;
     font-weight: 800;
+    font-family: sans-serif;
+
+    @media (max-width: 425px) {
+      font-size: 2.2rem;
+    }
   }
 
   p {
     font-size: 1.5rem;
     margin-top: 20px;
+
+    @media (max-width: 425px) {
+      font-size: 1rem;
+    }
   }
 `;
 
@@ -236,19 +243,46 @@ const Main = styled.div`
   width: 100%;
   height: 100%;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: flex-start;
   margin-top: 40px;
   position: relative;
+
+  @media screen and (max-width: 998px) {
+    justify-content: center;
+  }
+`;
+
+const UploadImg = styled.img`
+  object-fit: contain;
+  height: 300px;
+  position: absolute;
+  top: 40%;
+  right: 20%;
+  margin-left: 40px;
+
+  @media screen and (max-width: 1244px) {
+    right: 0;
+    top: 40%;
+  }
+
+  @media screen and (max-width: 998px) {
+    display: none;
+  }
 `;
 
 const Center = styled.div`
   background-color: #fff;
   padding: 20px;
   border-radius: 8px;
+  margin-left: 40px;
   width: 100%;
   max-width: 500px;
   box-shadow: 2px 8px 18px 1px rgba(145, 145, 145, 0.75);
-  transition: all 0.35s ease-in;
+  transition: all 0.3s ease-in;
+
+  @media screen and (max-width: 998px) {
+    margin-left: 0;
+  }
 `;
 
 const Top = styled.div`
