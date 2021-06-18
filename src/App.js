@@ -17,7 +17,7 @@ function App() {
       <Router>
         <Switch>
           <Route path="/use">
-            <Header />
+            <Header lineColor="black" />
             <Use />
             <Footer />
           </Route>

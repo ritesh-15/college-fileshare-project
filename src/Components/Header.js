@@ -1,28 +1,47 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link, useHistory } from "react-router-dom";
 import { Close, Menu } from "@material-ui/icons";
 import Footer from "./Footer";
 
-function Header() {
+function Header(props) {
   const [open, setOpen] = useState(false);
   const history = useHistory();
+  const [show, setShow] = useState(false);
+
+  const transition = () => {
+    if (window.scrollY > 50) {
+      setShow(true);
+    } else {
+      setShow(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", () => {
+      transition();
+    });
+    return () => window.removeEventListener("scroll", transition);
+  }, []);
+
+  console.log(props.lineColor);
+
   return (
-    <Container>
+    <Container
+      style={
+        show
+          ? { backgroundColor: "#F77F31" }
+          : { backgroundColor: "transparent" }
+      }
+    >
       <Left>
         {/* <img src="https://cdn.iconscout.com/icon/free/png-512/my-files-1-461722.png" /> */}
         <h4 onClick={(e) => history.push("/")}>fileShare</h4>
       </Left>
       <Right>
-        <Link to="/" style={{ textDecoration: "none" }}>
-          Home
-        </Link>
-        <Link to="/use" style={{ textDecoration: "none" }}>
-          How to use
-        </Link>
-        <Link to="/contact" style={{ textDecoration: "none" }}>
-          Contact Us
-        </Link>
+        <Link to="/">Home</Link>
+        <Link to="/use">How to use</Link>
+        <Link to="/contact">Contact Us</Link>
       </Right>
       <MenuIcon onClick={(e) => setOpen(true)} />
       <MobileNav
@@ -80,6 +99,7 @@ const Container = styled.div`
   justify-content: space-between;
   position: fixed;
   top: 0;
+  transition: all 0.3s ease-in;
 `;
 
 const Left = styled.div`
@@ -106,6 +126,7 @@ const Left = styled.div`
 const Right = styled.div`
   display: flex;
   align-items: center;
+  color: #fff;
 
   a {
     margin-right: 10px;
@@ -219,6 +240,7 @@ const MenuIcon = styled(Menu)`
   font-size: 2rem !important;
   color: #fff !important;
   display: none !important;
+  cursor: pointer;
 
   @media (max-width: 584px) {
     display: block !important;
