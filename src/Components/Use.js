@@ -1,11 +1,13 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 import styled from "styled-components";
 
 function Use() {
+  const history = useHistory();
   return (
     <CenterMain>
       <Container>
-        <h1>How to use fileShare ?</h1>
+        <h1>New to fileShare ?</h1>
       </Container>
       <Info>
         <Content>
@@ -44,6 +46,17 @@ function Use() {
             download link which you can share with anyone or you can send file
             using email also.
           </p>
+          <p
+            style={{
+              marginTop: "20px",
+              textAlign: "center",
+            }}
+          >
+            Share your first file now
+          </p>
+          <GetStarted>
+            <button onClick={(e) => history.push("/")}>Get Started</button>
+          </GetStarted>
         </Content>
       </Info>
     </CenterMain>
@@ -115,7 +128,7 @@ const Info = styled.div`
   flex-direction: column;
   max-width: 1300px;
   margin-bottom: 50px;
-  margin-top: -150px;
+  margin-top: -120px;
 
   @media (max-width: 426px) {
     margin-top: -210px;
@@ -160,4 +173,27 @@ const Content = styled.div`
     border-radius: 6px;
     height: 100%;
   }
+
+  button {
+    padding: 8px 20px;
+    background-color: orange;
+    border: 1px solid orange;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: all 250ms ease;
+    font-size: 1rem;
+
+    &:hover {
+      background-color: #fff;
+      color: orange;
+    }
+  }
+`;
+
+const GetStarted = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
 `;

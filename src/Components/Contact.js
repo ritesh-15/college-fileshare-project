@@ -10,6 +10,7 @@ function Contact() {
 
   const handleChange = (e) => {
     setQuery(e.target.value);
+    console.log(e.target.value);
   };
 
   const clear = () => {
@@ -73,10 +74,11 @@ function Contact() {
                 <span>Email</span>
               </label>
             </FormDiv>
-            <select onChange={(e) => handleChange(e)} required>
-              <option value="default" selected>
-                Select complent type
-              </option>
+            <select
+              defaultValue="--select--"
+              onChange={(e) => handleChange(e)}
+              required
+            >
               <option value="query">Query</option>
               <option value="issue">Issue</option>
               <option value="other">Other</option>

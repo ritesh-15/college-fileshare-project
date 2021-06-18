@@ -24,8 +24,6 @@ function Header(props) {
     return () => window.removeEventListener("scroll", transition);
   }, []);
 
-  console.log(props.lineColor);
-
   return (
     <Container
       style={
@@ -35,7 +33,6 @@ function Header(props) {
       }
     >
       <Left>
-        {/* <img src="https://cdn.iconscout.com/icon/free/png-512/my-files-1-461722.png" /> */}
         <h4 onClick={(e) => history.push("/")}>fileShare</h4>
       </Left>
       <Right>
@@ -57,6 +54,7 @@ function Header(props) {
               setOpen(false);
             }}
             style={{ textDecoration: "none" }}
+            to="/"
           >
             Home
           </Link>
@@ -66,6 +64,7 @@ function Header(props) {
               setOpen(false);
             }}
             style={{ textDecoration: "none" }}
+            to="/use"
           >
             How to use
           </Link>
@@ -75,6 +74,7 @@ function Header(props) {
               setOpen(false);
             }}
             style={{ textDecoration: "none" }}
+            to="/contact"
           >
             Contact Us
           </Link>
