@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { selectOpen, setClose } from "../fetures/emailSlice";
 import axios from "../axios";
 import { setMsgClose, setMsgOpen } from "../fetures/messageSlice";
+import { setCloseMsg, setOpenMsg } from "../fetures/alertSlice";
 
 function Email({ id, clear }) {
   const dispatch = useDispatch();
@@ -12,6 +13,20 @@ function Email({ id, clear }) {
   const [to, setTo] = useState("");
   const open = useSelector(selectOpen);
   const [sending, setSending] = useState(false);
+
+  const alertMessage = (msg, error, color) => {
+    dispatch(setOpenMsg());
+    dispatch(
+      setMsgOpen({
+        msg: msg,
+        error: error,
+        bgColor: color,
+      })
+    );
+    setTimeout(() => {
+      dispatch(setCloseMsg());
+    }, 2000);
+  };
 
   const sendMail = (e) => {
     setSending(true);
@@ -24,22 +39,12 @@ function Email({ id, clear }) {
     axios
       .post("/send/mail", data)
       .then((res) => {
-        dispatch(
-          setMsgOpen({
-            msg: "Email sent !",
-            bgColor: "green",
-            error: false,
-          })
-        );
-
         setFrom("");
         setTo("");
 
-        clear();
+        alertMessage("Email sent !", false, "green");
 
-        setTimeout(() => {
-          dispatch(setMsgClose());
-        }, 2000);
+        clear();
 
         setTimeout(() => {
           dispatch(setClose());
@@ -47,18 +52,7 @@ function Email({ id, clear }) {
         setSending(false);
       })
       .catch((err) => {
-        dispatch(
-          setMsgOpen({
-            msg: "Some error occured !",
-            bgColor: "red",
-            error: true,
-          })
-        );
-
-        setTimeout(() => {
-          dispatch(setMsgClose());
-        }, 2000);
-
+        alertMessage("Something went wrong !", true, "red");
         setSending(false);
       });
   };

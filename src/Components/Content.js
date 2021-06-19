@@ -9,6 +9,7 @@ import FormData from "form-data";
 import { setMsgClose, setMsgOpen } from "../fetures/messageSlice";
 import { CheckCircle } from "@material-ui/icons";
 import { Alert } from "@material-ui/lab";
+import { setCloseMsg, setOpenMsg } from "../fetures/alertSlice";
 
 function Content() {
   const [link, setLink] = useState("");
@@ -17,30 +18,30 @@ function Content() {
   const [file, setFile] = useState("");
   const [over, setOver] = useState(false);
   const [loading, setLoading] = useState(0);
-  const [copy, setCopy] = useState(false);
 
-  const copyText = () => {
-    let timer;
-    navigator.clipboard.writeText(link);
-    setCopy(true);
-
+  const alertMessage = (msg, error, color) => {
+    dispatch(setOpenMsg());
     dispatch(
       setMsgOpen({
-        msg: "Copied to clipboard !",
-        bgColor: "orange",
-        error: false,
+        msg: msg,
+        error: error,
+        bgColor: color,
       })
     );
-
     setTimeout(() => {
-      setCopy(false);
+      dispatch(setCloseMsg());
     }, 2000);
+  };
+
+  const copyText = () => {
+    navigator.clipboard.writeText(link);
+    alertMessage("Copied to clipboard !", false, "orange");
   };
 
   const handleChange = (e) => {
     let f = e.target.files[0];
     if (f === null || f === undefined) {
-      alert("Please select file");
+      alertMessage("No file found !", true, "red");
     } else {
       setFile(f);
       uploadFile(f);
@@ -55,10 +56,11 @@ function Content() {
   const handleDrop = (e) => {
     e.preventDefault();
     if (!e.dataTransfer.files[0]) {
-      alert("No file found");
+      alertMessage("No file found !", true, "red");
     } else {
       setFile(e.dataTransfer.files[0]);
       uploadFile(e.dataTransfer.files[0]);
+      setOver(false);
     }
   };
 
@@ -71,7 +73,7 @@ function Content() {
     let formData = new FormData();
     formData.append("file", f);
     if (!formData || formData === null || formData === undefined) {
-      alert("No file found !");
+      alertMessage("No file found !", true, "red");
     } else {
       axios
         .post("/upload/file", formData, {
@@ -87,16 +89,7 @@ function Content() {
           setFile("");
         })
         .catch((err) => {
-          dispatch(
-            setMsgOpen({
-              msg: "Something went wrong !",
-              bgColor: "red",
-              error: true,
-            })
-          );
-          setTimeout(() => {
-            dispatch(setMsgClose());
-          }, 2000);
+          alertMessage("Something went wrong !", true, "red");
         });
     }
   };
@@ -172,7 +165,7 @@ function Content() {
                 <p>Link will be expire in 24 hours</p>
                 <CopyLink>
                   <input type="text" value={link} readOnly />
-                  {copy ? <Check /> : <Copy onClick={copyText} />}
+                  <Copy onClick={copyText} />
                 </CopyLink>
               </Link>
               <Or>Or</Or>

@@ -1,17 +1,26 @@
 import axios from "../axios";
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useDispatch } from "react-redux";
+import { setCloseMsg, setOpenMsg } from "../fetures/alertSlice";
+import { setMsgOpen } from "../fetures/messageSlice";
+import {
+  CircularProgress,
+  FormControlLabel,
+  RadioGroup,
+} from "@material-ui/core";
+import Radio from "@material-ui/core/Radio";
+import "./Contact.css";
+import { useHistory } from "react-router-dom";
 
 function Contact() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [query, setQuery] = useState("");
   const [message, setMessage] = useState("");
-
-  const handleChange = (e) => {
-    setQuery(e.target.value);
-    console.log(e.target.value);
-  };
+  const dispatch = useDispatch();
+  const [sending, setSending] = useState(false);
+  const history = useHistory();
 
   const clear = () => {
     setName("");
@@ -20,8 +29,23 @@ function Contact() {
     setMessage("");
   };
 
+  const alertMessage = (msg, error, color) => {
+    dispatch(setOpenMsg());
+    dispatch(
+      setMsgOpen({
+        msg: msg,
+        error: error,
+        bgColor: color,
+      })
+    );
+    setTimeout(() => {
+      dispatch(setCloseMsg());
+    }, 2000);
+  };
+
   const send = () => {
-    if (query != "default") {
+    setSending(true);
+    if (query) {
       const data = {
         name: name,
         email: email,
@@ -32,12 +56,21 @@ function Contact() {
       axios
         .post("/new/contact", data)
         .then((res) => {
-          clear();
+          setSending(false);
           console.log(res.data);
+          clear();
+          alertMessage("Thank you for reaching us !", false, "green");
+          setTimeout(() => {
+            history.push("/");
+          }, 2200);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          alertMessage("Something went wrong !", true, "red");
+          setSending(false);
+        });
     } else {
-      alert("Please select complent type !");
+      alertMessage("All fields are mandatory !", true, "orange");
+      setSending(false);
     }
   };
 
@@ -74,15 +107,32 @@ function Contact() {
                 <span>Email</span>
               </label>
             </FormDiv>
-            <select
-              defaultValue="--select--"
-              onChange={(e) => handleChange(e)}
-              required
+            <p>Select complent type</p>
+            <RadioGroup
+              row
+              aria-label="position"
+              name="position"
+              defaultValue="top"
             >
-              <option value="query">Query</option>
-              <option value="issue">Issue</option>
-              <option value="other">Other</option>
-            </select>
+              <FormControlLabel
+                value="query"
+                control={<Radio color="primary" />}
+                label="Query"
+                onChange={(e) => setQuery(e.target.value)}
+              />
+              <FormControlLabel
+                value="issue"
+                control={<Radio color="primary" />}
+                label="Issue"
+                onChange={(e) => setQuery(e.target.value)}
+              />
+              <FormControlLabel
+                value="other"
+                control={<Radio color="primary" />}
+                label="Other"
+                onChange={(e) => setQuery(e.target.value)}
+              />
+            </RadioGroup>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -90,13 +140,11 @@ function Contact() {
             />
             <button
               disabled={
-                !name || !email || !message || !query || query == "default"
-                  ? true
-                  : false
+                !name || !email || !message || !query || sending ? true : false
               }
               onClick={send}
             >
-              Send
+              {sending ? <ProgressCircle size={20} /> : "Send"}
             </button>
           </Info>
         </Content>
@@ -153,7 +201,7 @@ const Container = styled.div`
 const ContainerTwo = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 50px;
+  margin-top: 20px;
 
   img {
     height: 350px;
@@ -195,6 +243,11 @@ const Content = styled.div`
 const Info = styled.div`
   display: flex;
   flex-direction: column;
+
+  p {
+    color: grey;
+    margin: 10px 0;
+  }
 
   select {
     width: 100%;
@@ -317,4 +370,9 @@ const FormDiv = styled.div`
       transition: all 0.3s ease;
     }
   }
+`;
+
+const ProgressCircle = styled(CircularProgress)`
+  font-size: 1px !important;
+  color: #fff !important;
 `;

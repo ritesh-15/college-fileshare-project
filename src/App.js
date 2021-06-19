@@ -8,10 +8,12 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Use from "./Components/Use";
 import Contact from "./Components/Contact";
 import Footer from "./Components/Footer";
+import { selectOpenMsg } from "./fetures/alertSlice";
 
 function App() {
   const message = useSelector(selectMsg);
-
+  const msgOpen = useSelector(selectOpenMsg);
+  console.log("msg open", msgOpen);
   return (
     <div className="App">
       <Router>
@@ -34,7 +36,7 @@ function App() {
         </Switch>
       </Router>
       <Message
-        hide={!message ? true : false}
+        hide={msgOpen ? false : true}
         message={message?.msg}
         error={message?.error}
         bgColor={message?.bgColor}

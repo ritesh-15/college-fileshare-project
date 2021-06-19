@@ -12,6 +12,25 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-family: sans-serif;
+  scrollbar-color: #000;
+}
+
+body::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+}
+
+body::-webkit-scrollbar-track-piece {
+  background: transparent;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: orange;
+  border-radius: 6px;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background: orange;
 }
 
 code {
